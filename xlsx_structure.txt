@@ -1,0 +1,21 @@
+Sheets: ['main', 'Sheet1', 'Sheet2', 'Sheet4']
+
+=== main ===
+Headers: ('Year', 'Election Type', 'District', 'PC Name', 'Assembly ID', 'Assembly', 'Town Name', 'Mandal ', 'Village ID', 'Village', 'Booth ID', 'Booth', 'PRP', 'INC', 'IND', 'TDP', 'LSP', 'BJP')
+  Data: (2009.0, 'Assembly', 'Srikakulam', 'Srikakulam', 108.0, 'AMADALAVALASA', None, 'Amadalavalasa', 21089.0, 'GARIMELLAKOTHA VALASA', 63676.0, 1.0, 295.0, 213.0, 28.0, 26.0, 12.0, 9.0)
+  Data: (2009.0, 'Assembly', 'Srikakulam', 'Srikakulam', 108.0, 'AMADALAVALASA', None, 'Amadalavalasa', 6432.0, 'NELLIPARTHI', 63677.0, 2.0, 161.0, 448.0, 73.0, 126.0, 18.0, 19.0)
+
+=== Sheet1 ===
+Headers: ('Year', 'Election Type', 'District', 'PC Name', 'Assembly ID', 'Assembly', 'Town Name', 'Mandal ', 'Village ID', 'Village', 'Booth ID', 'Booth', 'YSRCP', 'TDP', 'JSP', 'NOTA', 'BSP', 'LSP', 'INC', 'Total')
+  Data: (2014.0, 'Assembly', 'Srikakulam', 'Srikakulam', 108.0, 'AMADALAVALASA', None, 'Amadalavalasa', 21089.0, 'GARIMELLAKOTHA VALASA', 422921.0, 1.0, 344.0, 219.0, 4.0, 4.0, 3.0, 3.0, 1.0, 578.0)
+  Data: (2014.0, 'Assembly', 'Srikakulam', 'Srikakulam', 108.0, 'AMADALAVALASA', None, 'Amadalavalasa', 6432.0, 'NELLIPARTHI', 422922.0, 2.0, 450.0, 411.0, 10.0, 3.0, 15.0, 3.0, 25.0, 917.0)
+
+=== Sheet2 ===
+Headers: ('Year', 'Election Type', 'District', 'PC Name', 'Assembly ID', 'Assembly', 'Town Name', 'Mandal ', 'Village ID', 'Village', 'Booth ID', 'Booth', 'TDP', 'YSRCP', 'JANASENA ', 'BJP', 'INC', 'IND', 'NOTA')
+  Data: (2019.0, 'Assembly', 'Srikakulam', 'Srikakulam', 108.0, 'AMADALAVALASA', None, 'Amadalavalasa', 21089.0, 'GARIMELLAKOTHA VALASA', 1569669.0, 1.0, 396.0, 196.0, 14.0, 3.0, 1.0, 0.0, 16.0)
+  Data: (2019.0, 'Assembly', 'Srikakulam', 'Srikakulam', 108.0, 'AMADALAVALASA', None, 'Amadalavalasa', 6432.0, 'NELLIPARTHI', 1569670.0, 2.0, 371.0, 353.0, 11.0, 4.0, 4.0, 9.0, 29.0)
+
+=== Sheet4 ===
+Headers: ('Palakonda', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None)
+  Data: ('Palakonda', 'PS No.', 'INC', 'YSRCP', 'Bahujan Samaj Party', 'Jatiya Jana Sena Party', 'JSP', 'Navarang Congress Party', 'Gondwana Dandkaranya Party', None, 'No.of rejected votes', 'NOTA', 'Total', None, None, None, None, None, None, None)
+  Data: ('Palakonda', 1.0, 17.0, 376.0, 10.0, 5.0, 190.0, 7.0, 10.0, 615.0, 0.0, 49.0, 664.0, None, None, None, None, None, None, None)

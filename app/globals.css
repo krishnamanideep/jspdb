@@ -1,26 +1,255 @@
 @import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Fix Leaflet map overlay issues while allowing proper rendering */
+.leaflet-container {
+    z-index: 1;
+    position: relative;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Ensure map stays contained within its parent */
+.leaflet-container {
+    max-width: 100%;
+    max-height: 100%;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Section header colors for print report */
+.section-header {
+    padding: 8px 16px;
+    border-radius: 8px 8px 0 0;
+    margin-bottom: 0;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.section-header h2 {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.section-header-blue {
+    background-color: #dbeafe;
+    border-bottom: 4px solid #2563eb;
+}
+
+.section-header-blue h2 {
+    color: #1e40af;
+}
+
+.section-header-purple {
+    background-color: #f3e8ff;
+    border-bottom: 4px solid #9333ea;
+}
+
+.section-header-purple h2 {
+    color: #6b21a8;
+}
+
+.section-header-amber {
+    background-color: #fef3c7;
+    border-bottom: 4px solid #d97706;
+}
+
+.section-header-amber h2 {
+    color: #92400e;
+}
+
+.section-header-green {
+    background-color: #dcfce7;
+    border-bottom: 4px solid #16a34a;
+}
+
+.section-header-green h2 {
+    color: #166534;
+}
+
+.section-header-red {
+    background-color: #fee2e2;
+    border-bottom: 4px solid #dc2626;
+}
+
+.section-header-red h2 {
+    color: #991b1b;
+}
+
+.section-content {
+    border: 1px solid #e5e7eb;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 16px;
+    background: white;
+}
+
+.print-section {
+    margin-bottom: 24px;
+}
+
+.print-footer {
+    text-align: center;
+    color: #6b7280;
+    font-size: 12px;
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* Hide print-only elements on screen */
+.print-only-header {
+    display: none;
+}
+
+/* Print styles for PDF generation */
+@media print {
+
+    /* Force page size and layout - LANDSCAPE */
+    @page {
+        size: A4 landscape;
+        margin: 12mm;
+    }
+
+    /* Reset body */
+    html,
+    body {
+        width: 297mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+    }
+
+    /* Main container */
+    .print-container {
+        width: 100% !important;
+        max-width: 273mm !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+    }
+
+    .print-content {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: hidden !important;
+    }
+
+    /* Hide elements not needed in print */
+    .no-print,
+    nav,
+    header,
+    button,
+    select,
+    [role="dialog"] {
+        display: none !important;
+    }
+
+    /* Show print header */
+    .print-only-header {
+        display: block !important;
+        text-align: center;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #dc2626;
+    }
+
+    .print-only-header h1 {
+        font-size: 20px;
+        font-weight: bold;
+        color: #1f2937;
+        margin: 0;
+    }
+
+    .print-only-header p {
+        font-size: 12px;
+        color: #6b7280;
+        margin: 4px 0 0 0;
+    }
+
+    /* Section styling */
+    .print-section {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: hidden !important;
+        margin-bottom: 16px !important;
+    }
+
+    .section-content {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: hidden !important;
+        padding: 12px !important;
+    }
+
+    .section-content>* {
+        max-width: 100% !important;
+        overflow: hidden !important;
+    }
+
+    /* Page break controls */
+    .page-break {
+        page-break-before: always;
+        break-before: page;
+    }
+
+    .section-header {
+        page-break-after: avoid;
+        break-after: avoid;
+    }
+
+    /* Constrain all content */
+    main,
+    div,
+    section,
+    article {
+        max-width: 100% !important;
+    }
+
+    /* Scale down charts */
+    .recharts-wrapper,
+    .recharts-surface {
+        max-width: 100% !important;
+        overflow: hidden !important;
+    }
+
+    svg {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+
+    /* Tables */
+    table {
+        width: 100% !important;
+        max-width: 100% !important;
+        font-size: 10px !important;
+        page-break-inside: avoid;
+    }
+
+    th,
+    td {
+        padding: 4px 6px !important;
+    }
+
+    /* Cards and containers */
+    .bg-white,
+    .rounded-lg,
+    .rounded-xl {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    /* Remove shadows */
+    .shadow,
+    .shadow-md,
+    .shadow-lg,
+    .shadow-xl {
+        box-shadow: none !important;
+    }
+
+    /* Preserve colors */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Footer */
+    .print-footer {
+        position: relative;
+        page-break-before: avoid;
+    }
 }

@@ -1,0 +1,72 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── Helper functions ───────────────────────────────────────────────
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    function isSuperAdmin() {
+      return isAuthenticated() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'super_admin';
+    }
+    function isAdmin() {
+      return isAuthenticated() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['super_admin', 'admin'];
+    }
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
+    // ─── users collection ────────────────────────────────────────────────
+    match /users/{uid} {
+      // Any authenticated user can read their own doc
+      allow read: if isOwner(uid) || isAdmin();
+      // Only super_admin can create/update/delete user docs
+      allow create: if isSuperAdmin() || (
+        // Allow first-time setup: if NO users exist yet this is handled via setup route
+        !exists(/databases/$(database)/documents/users/$(uid))
+      );
+      allow update: if isSuperAdmin() || isOwner(uid);
+      allow delete: if isSuperAdmin();
+    }
+
+    // First-time bootstrap doc
+    match /system/setup {
+      allow read: if true;
+      allow write: if !exists(/databases/$(database)/documents/system/setup) || isSuperAdmin();
+    }
+
+    // ─── assemblies collection ───────────────────────────────────────────
+    match /assemblies/{assemblyId} {
+      // Authenticated users can read if they have access
+      allow read: if isAuthenticated();
+
+      // Sub-collections: overview, elections, candidates, booths, survey, scenario
+      match /overview/{doc} {
+        allow read: if isAuthenticated();
+        allow write: if isAdmin();
+      }
+      match /elections/{year} {
+        allow read: if isAuthenticated();
+        allow write: if isAdmin();
+      }
+      match /candidates/{candidateId} {
+        allow read: if isAuthenticated();
+        allow write: if isAdmin();
+      }
+      match /booths/{boothId} {
+        allow read: if isAuthenticated();
+        allow write: if isAdmin();
+      }
+      match /survey/{doc} {
+        allow read: if isAuthenticated();
+        allow write: if isAdmin();
+      }
+      match /scenario/{doc} {
+        allow read: if isAuthenticated();
+        allow write: if isAdmin();
+      }
+    }
+  }
+}
