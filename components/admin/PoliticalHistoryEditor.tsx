@@ -314,7 +314,7 @@ export default function PoliticalHistoryEditor() {
                                     value={config.customNarrative}
                                     onChange={(e) => setConfig({ ...config, customNarrative: e.target.value })}
                                     className="w-full border rounded p-3 h-32 font-mono text-sm"
-                                    placeholder="<ul><li><strong>2011-2016:</strong> BJP gained ground...</li></ul>"
+                                    placeholder="<ul><li><strong>2014-2019:</strong> BJP gained ground...</li></ul>"
                                 />
                             </div>
                         </div>
@@ -454,7 +454,7 @@ export default function PoliticalHistoryEditor() {
                         <div className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium mb-1">Title</label>
-                                <input type="text" value={editingInsight.title} onChange={(e) => setEditingInsight({ ...editingInsight, title: e.target.value })} className="w-full border rounded px-3 py-2" placeholder="e.g., 2016-2021 Trend" />
+                                <input type="text" value={editingInsight.title} onChange={(e) => setEditingInsight({ ...editingInsight, title: e.target.value })} className="w-full border rounded px-3 py-2" placeholder="e.g., 2019-2024 Trend" />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium mb-1">Content</label>

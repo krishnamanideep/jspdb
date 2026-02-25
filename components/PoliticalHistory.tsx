@@ -51,16 +51,16 @@ export default function PoliticalHistory({ selectedAssembly, previewData }: { se
     narrative?: string;
   } | null>(null);
   const [mlas, setMlas] = useState<{
-    '2021': any[];
-    '2016': any[];
-    '2011': any[];
-  }>({ '2021': [], '2016': [], '2011': [] });
+    '2024': any[];
+    '2019': any[];
+    '2014': any[];
+  }>({ '2024': [], '2019': [], '2014': [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const analyzeTrends = (booths: PollingStation[], narrative?: string) => {
-    const years = ['2011', '2016', '2021'] as const;
-    const parties = ['NRC', 'DMK', 'AIADMK', 'BJP', 'PMK', 'IND', 'OTHERS'];
+    const years = ['2014', '2019', '2024'] as const;
+    const parties = ['JSP', 'YSRCP', 'TDP', 'BJP', 'BJP', 'IND', 'OTHERS'];
 
     const trendData = years.map((year) => {
       const yearData: { year: string;[party: string]: any } = { year };
@@ -94,7 +94,7 @@ export default function PoliticalHistory({ selectedAssembly, previewData }: { se
       return yearData;
     });
 
-    const calculateSwingForYearRange = (y1: '2011' | '2016' | '2021', y2: '2011' | '2016' | '2021') => {
+    const calculateSwingForYearRange = (y1: '2014' | '2019' | '2024', y2: '2014' | '2019' | '2024') => {
       const d1 = trendData.find(d => d.year === y1);
       const d2 = trendData.find(d => d.year === y2);
 
@@ -106,8 +106,8 @@ export default function PoliticalHistory({ selectedAssembly, previewData }: { se
     };
 
     const swingData = [
-      ...calculateSwingForYearRange('2011', '2016'),
-      ...calculateSwingForYearRange('2016', '2021')
+      ...calculateSwingForYearRange('2014', '2019'),
+      ...calculateSwingForYearRange('2019', '2024')
     ];
 
     setTrends({
@@ -127,8 +127,12 @@ export default function PoliticalHistory({ selectedAssembly, previewData }: { se
       try {
         setError(null);
 
-        // 1. Load Polling Data (Local)
-        const assemblyData = processLocalPollingData(selectedAssembly);
+        // 1. Load Polling Data (Firestore)
+        const psRef = collection(db, 'pollingStation');
+        const psQuery = query(psRef, where('ac_id', '==', selectedAssembly));
+        const psSnap = await getDocs(psQuery);
+        const assemblyData = psSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as PollingStation));
+
         setData(assemblyData);
 
         // 2. Load MLAs (Firestore)
@@ -143,13 +147,13 @@ export default function PoliticalHistory({ selectedAssembly, previewData }: { se
         }
 
         // Group MLAs by year
-        const mlasByYear: any = { '2021': [], '2016': [], '2011': [] };
+        const mlasByYear: any = { '2024': [], '2019': [], '2014': [] };
         fetchedMlas.forEach((m: any) => {
           if (mlasByYear[m.year]) mlasByYear[m.year].push(m);
         });
 
         // Sort each year
-        ['2021', '2016', '2011'].forEach(year => {
+        ['2024', '2019', '2014'].forEach(year => {
           mlasByYear[year].sort((a: any, b: any) => (b.voteShare || 0) - (a.voteShare || 0));
         });
         setMlas(mlasByYear);
@@ -289,8 +293,8 @@ export default function PoliticalHistory({ selectedAssembly, previewData }: { se
               </tr>
             </thead>
             <tbody>
-              {['2021', '2016', '2011'].map((year, idx) => {
-                const yearMlas = mlas[year as '2021' | '2016' | '2011'];
+              {['2024', '2019', '2014'].map((year, idx) => {
+                const yearMlas = mlas[year as '2024' | '2019' | '2014'];
                 const first = yearMlas[0];
                 const second = yearMlas[1];
                 const third = yearMlas[2];
@@ -298,11 +302,11 @@ export default function PoliticalHistory({ selectedAssembly, previewData }: { se
                 const getPartyBadgeColor = (party: string) => {
                   switch (party) {
                     case 'BJP': return 'bg-gradient-to-r from-orange-500 to-orange-600 text-white';
-                    case 'DMK': return 'bg-gradient-to-r from-red-600 to-red-700 text-white';
-                    case 'AIADMK': return 'bg-gradient-to-r from-green-600 to-green-700 text-white';
+                    case 'YSRCP': return 'bg-gradient-to-r from-red-600 to-red-700 text-white';
+                    case 'TDP': return 'bg-gradient-to-r from-green-600 to-green-700 text-white';
                     case 'INC': return 'bg-gradient-to-r from-blue-500 to-blue-600 text-white';
-                    case 'NR Congress': case 'NRC': return 'bg-gradient-to-r from-cyan-600 to-cyan-700 text-white';
-                    case 'PMK': return 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-white';
+                    case 'JSP': case 'JSP': return 'bg-gradient-to-r from-cyan-600 to-cyan-700 text-white';
+                    case 'BJP': return 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-white';
                     case 'IND': return 'bg-gradient-to-r from-gray-600 to-gray-700 text-white';
                     default: return 'bg-gradient-to-r from-purple-500 to-purple-600 text-white';
                   }
@@ -401,7 +405,7 @@ export default function PoliticalHistory({ selectedAssembly, previewData }: { se
       {/* Electoral Trends */}
       {config.showElectoralTrends !== false && (
         <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-xl font-semibold mb-4">Electoral Trends (2011-2021)</h3>
+          <h3 className="text-xl font-semibold mb-4">Electoral Trends (2014-2024)</h3>
           <ResponsiveContainer width="100%" height={400}>
             <LineChart data={trends.trendData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -410,10 +414,10 @@ export default function PoliticalHistory({ selectedAssembly, previewData }: { se
               <Tooltip />
               <Legend />
               <Line type="monotone" dataKey="BJP" stroke="#FF6B35" strokeWidth={2} />
-              <Line type="monotone" dataKey="DMK" stroke="#E63946" strokeWidth={2} />
-              <Line type="monotone" dataKey="AIADMK" stroke="#06A77D" strokeWidth={2} />
-              <Line type="monotone" dataKey="NRC" stroke="#0077B6" strokeWidth={2} />
-              <Line type="monotone" dataKey="PMK" stroke="#FFC300" strokeWidth={2} />
+              <Line type="monotone" dataKey="YSRCP" stroke="#E63946" strokeWidth={2} />
+              <Line type="monotone" dataKey="TDP" stroke="#06A77D" strokeWidth={2} />
+              <Line type="monotone" dataKey="JSP" stroke="#0077B6" strokeWidth={2} />
+              <Line type="monotone" dataKey="BJP" stroke="#FFC300" strokeWidth={2} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -423,7 +427,7 @@ export default function PoliticalHistory({ selectedAssembly, previewData }: { se
       {config.showVoteSwing !== false && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-xl font-semibold mb-4">Vote Swing (2011 → 2016)</h3>
+            <h3 className="text-xl font-semibold mb-4">Vote Swing (2014 → 2019)</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={trends.swingData.slice(0, 5)}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -440,7 +444,7 @@ export default function PoliticalHistory({ selectedAssembly, previewData }: { se
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-xl font-semibold mb-4">Vote Swing (2016 → 2021)</h3>
+            <h3 className="text-xl font-semibold mb-4">Vote Swing (2019 → 2024)</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={trends.swingData.slice(5)}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -466,9 +470,9 @@ export default function PoliticalHistory({ selectedAssembly, previewData }: { se
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
                 <th className="px-4 py-3 font-semibold text-gray-700">Party</th>
-                <th className="px-4 py-3 font-semibold text-gray-700 text-center" colSpan={2}>2021 Election</th>
-                <th className="px-4 py-3 font-semibold text-gray-700 text-center" colSpan={2}>2016 Election</th>
-                <th className="px-4 py-3 font-semibold text-gray-700 text-center" colSpan={2}>2011 Election</th>
+                <th className="px-4 py-3 font-semibold text-gray-700 text-center" colSpan={2}>2024 Election</th>
+                <th className="px-4 py-3 font-semibold text-gray-700 text-center" colSpan={2}>2019 Election</th>
+                <th className="px-4 py-3 font-semibold text-gray-700 text-center" colSpan={2}>2014 Election</th>
               </tr>
               <tr className="bg-gray-50 border-b border-gray-200 text-xs text-gray-500">
                 <th className="px-4 py-2"></th>
@@ -481,11 +485,11 @@ export default function PoliticalHistory({ selectedAssembly, previewData }: { se
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {['NRC', 'DMK', 'AIADMK', 'BJP', 'PMK', 'IND', 'OTHERS'].map((party) => {
+              {['JSP', 'YSRCP', 'TDP', 'BJP', 'BJP', 'IND', 'OTHERS'].map((party) => {
                 const getYearData = (year: string) => trends.trendData.find(d => d.year === year);
-                const d2021 = getYearData('2021');
-                const d2016 = getYearData('2016');
-                const d2011 = getYearData('2011');
+                const d2024 = getYearData('2024');
+                const d2019 = getYearData('2019');
+                const d2014 = getYearData('2014');
 
                 // Helper to get average votes per booth for that party
                 const getAvgVotes = (year: string) => {
@@ -498,20 +502,20 @@ export default function PoliticalHistory({ selectedAssembly, previewData }: { se
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <div className={`w-3 h-3 rounded-full ${party === 'BJP' ? 'bg-[#FF6B35]' :
-                          party === 'DMK' ? 'bg-[#E63946]' :
-                            party === 'AIADMK' ? 'bg-[#06A77D]' :
-                              party === 'NRC' ? 'bg-[#0077B6]' :
-                                party === 'PMK' ? 'bg-[#FFC300]' : 'bg-gray-400'
+                          party === 'YSRCP' ? 'bg-[#E63946]' :
+                            party === 'TDP' ? 'bg-[#06A77D]' :
+                              party === 'JSP' ? 'bg-[#0077B6]' :
+                                party === 'BJP' ? 'bg-[#FFC300]' : 'bg-gray-400'
                           }`} />
                         <span className="font-medium text-gray-900">{party}</span>
                       </div>
                     </td>
-                    <td className="px-2 py-3 text-right text-gray-900 font-medium border-l border-gray-50">{d2021?.[party] || '0.00'}%</td>
-                    <td className="px-2 py-3 text-right text-sm text-gray-500">{getAvgVotes('2021')}</td>
-                    <td className="px-2 py-3 text-right text-gray-900 font-medium border-l border-gray-50">{d2016?.[party] || '0.00'}%</td>
-                    <td className="px-2 py-3 text-right text-sm text-gray-500">{getAvgVotes('2016')}</td>
-                    <td className="px-2 py-3 text-right text-gray-900 font-medium border-l border-gray-50">{d2011?.[party] || '0.00'}%</td>
-                    <td className="px-2 py-3 text-right text-sm text-gray-500">{getAvgVotes('2011')}</td>
+                    <td className="px-2 py-3 text-right text-gray-900 font-medium border-l border-gray-50">{d2024?.[party] || '0.00'}%</td>
+                    <td className="px-2 py-3 text-right text-sm text-gray-500">{getAvgVotes('2024')}</td>
+                    <td className="px-2 py-3 text-right text-gray-900 font-medium border-l border-gray-50">{d2019?.[party] || '0.00'}%</td>
+                    <td className="px-2 py-3 text-right text-sm text-gray-500">{getAvgVotes('2019')}</td>
+                    <td className="px-2 py-3 text-right text-gray-900 font-medium border-l border-gray-50">{d2014?.[party] || '0.00'}%</td>
+                    <td className="px-2 py-3 text-right text-sm text-gray-500">{getAvgVotes('2014')}</td>
                   </tr>
                 );
               })}
@@ -546,7 +550,7 @@ export default function PoliticalHistory({ selectedAssembly, previewData }: { se
                 <li className="flex items-start">
                   <span className="font-semibold mr-2">•</span>
                   <span>
-                    <strong>2011-2016:</strong> Major shifts in party preferences with{' '}
+                    <strong>2014-2019:</strong> Major shifts in party preferences with{' '}
                     {trends.swingData.slice(0, 5).find((s: any) => s.swing > 0)?.party || 'multiple parties'} gaining ground.
                   </span>
                 </li>

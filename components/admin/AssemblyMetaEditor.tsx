@@ -116,8 +116,8 @@ export default function AssemblyMetaEditor() {
                     decidingFactors: [],
                     electoralOutlook: [
                         { party: 'BJP', range: '0-0%', value: 0, color: 'orange' },
-                        { party: 'DMK', range: '0-0%', value: 0, color: 'red' },
-                        { party: 'AIADMK', range: '0-0%', value: 0, color: 'green' },
+                        { party: 'YSRCP', range: '0-0%', value: 0, color: 'red' },
+                        { party: 'TDP', range: '0-0%', value: 0, color: 'green' },
                         { party: 'Others', range: '0-0%', value: 0, color: 'gray' }
                     ],
                     historyNarrative: '<h3>Political History</h3><p>Enter history details here...</p>',
@@ -354,7 +354,7 @@ export default function AssemblyMetaEditor() {
                                                         else if (lower.includes('neutral')) type = 'Neutral';
 
                                                         // Extract party
-                                                        const commonParties = ['BJP', 'DMK', 'AIADMK', 'INC', 'PMK', 'NRC', 'AINRC', 'LJK', 'IND'];
+                                                        const commonParties = ['BJP', 'YSRCP', 'TDP', 'INC', 'BJP', 'JSP', 'AIJSP', 'LJK', 'IND'];
                                                         const foundParty = commonParties.find(p => str.includes(p));
 
                                                         if (foundParty) party = foundParty;
@@ -369,7 +369,7 @@ export default function AssemblyMetaEditor() {
                                                     };
 
                                                     const { type, party } = parseSentiment(r.sentiment);
-                                                    const PARTIES = ['BJP', 'DMK', 'AIADMK', 'INC', 'PMK', 'NRC', 'AINRC', 'LJK', 'IND', 'Others'];
+                                                    const PARTIES = ['BJP', 'YSRCP', 'TDP', 'INC', 'BJP', 'JSP', 'AIJSP', 'LJK', 'IND', 'Others'];
 
                                                     const handleUpdate = (newType: string, newParty: string, customText: string = '') => {
                                                         let finalSentiment = newType;

@@ -20,7 +20,7 @@ const Popup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ss
 const CircleMarker = dynamic(() => import('react-leaflet').then(mod => mod.CircleMarker), { ssr: false });
 
 // Valid political parties to filter out fields like NOTA, VOTERS, etc.
-const VALID_CANDIDATES = ['BJP', 'DMK', 'AIADMK', 'INC', 'NRC', 'NR Congress', 'PMK', 'VCK', 'CPI', 'CPI(M)', 'IND', 'OTHERS'];
+const VALID_CANDIDATES = ['BJP', 'YSRCP', 'TDP', 'INC', 'JSP', 'JSP', 'BJP', 'BSP', 'CPI', 'CPI(M)', 'IND', 'OTHERS'];
 
 const CARD_ICONS: Record<string, React.ComponentType<any>> = {
   star: Star,
@@ -63,9 +63,9 @@ interface ManualHotspot {
   candidateName: string;
   bestPerformance: number;
   bestYear: string;
-  perf2021?: number;
-  perf2016?: number;
-  perf2011?: number;
+  perf2024?: number;
+  perf2019?: number;
+  perf2014?: number;
   order: number;
 }
 
@@ -85,7 +85,7 @@ const defaultConfig: PageConfig = {
   showWeakBooths: true,
   showIndependentHotspots: true,
   showCustomCards: true,
-  heatMapTitle: 'BJP vs DMK Vote Share Analysis (2021)',
+  heatMapTitle: 'BJP vs YSRCP Vote Share Analysis (2024)',
   heatMapDescription: 'Visualizing booth-wise performance distribution. Each point represents a polling booth.'
 };
 
@@ -119,43 +119,43 @@ const processLocalPollingData = (targetAssemblyId: string | null, jsonData: Reco
 
       const entries = jsonData[key] as Record<string, unknown>[];
       const stations = entries.map((station, index) => {
-        const candidates2021: Record<string, number> = {};
-        const candidates2016: Record<string, number> = {};
-        const candidates2011: Record<string, number> = {};
+        const candidates2024: Record<string, number> = {};
+        const candidates2019: Record<string, number> = {};
+        const candidates2014: Record<string, number> = {};
 
         Object.keys(station).forEach(k => {
-          if (k.endsWith('_2021_pct')) {
-            const candidateKey = k.replace('_2021_pct', '');
+          if (k.endsWith('_2024_pct')) {
+            const candidateKey = k.replace('_2024_pct', '');
             if (isCandidateKey(candidateKey)) {
-              candidates2021[candidateKey] = parseNumeric(station[k]);
+              candidates2024[candidateKey] = parseNumeric(station[k]);
             }
-          } else if (k.endsWith('_2016_pct')) {
-            const candidateKey = k.replace('_2016_pct', '');
+          } else if (k.endsWith('_2019_pct')) {
+            const candidateKey = k.replace('_2019_pct', '');
             if (isCandidateKey(candidateKey)) {
-              candidates2016[candidateKey] = parseNumeric(station[k]);
+              candidates2019[candidateKey] = parseNumeric(station[k]);
             }
-          } else if (k.endsWith('_2011_pct')) {
-            const candidateKey = k.replace('_2011_pct', '');
+          } else if (k.endsWith('_2014_pct')) {
+            const candidateKey = k.replace('_2014_pct', '');
             if (isCandidateKey(candidateKey)) {
-              candidates2011[candidateKey] = parseNumeric(station[k]);
+              candidates2014[candidateKey] = parseNumeric(station[k]);
             }
           }
         });
 
         return {
-          id: `${acId}_${station.PS_NO_2021 || index}`,
+          id: `${acId}_${station.PS_NO_2024 || index}`,
           ac_id: acId,
           ac_name: String(station.LOCALITY_EXTRACTED ?? `AC ${acId}`),
-          ps_no: String(station.PS_NO_2021 ?? index),
-          ps_name: String(station.PS_NO_2021 ?? index),
+          ps_no: String(station.PS_NO_2024 ?? index),
+          ps_name: String(station.PS_NO_2024 ?? index),
           locality: String(station.LOCALITY_EXTRACTED ?? ''),
           latitude: parseNumeric(station.Latitude),
           longitude: parseNumeric(station.Longitude),
           category: String(station.TOP_SCORE_CATEGORY ?? ''),
           strongestParty: String(station.TOP_SCORE_PARTY ?? ''),
-          election2021: { year: 2021, total_votes: parseNumeric(station.POLLED_2021), candidates: candidates2021 },
-          election2016: { year: 2016, total_votes: parseNumeric(station.POLLED_2016), candidates: candidates2016 },
-          election2011: { year: 2011, total_votes: parseNumeric(station.POLLED_2011), candidates: candidates2011 }
+          election2024: { year: 2024, total_votes: parseNumeric(station.POLLED_2024), candidates: candidates2024 },
+          election2019: { year: 2019, total_votes: parseNumeric(station.POLLED_2019), candidates: candidates2019 },
+          election2014: { year: 2014, total_votes: parseNumeric(station.POLLED_2014), candidates: candidates2014 }
         };
       });
       allStations = [...allStations, ...stations];
@@ -178,7 +178,7 @@ export default function RetroBoothsAnalysis({ selectedAssembly }: { selectedAsse
 
   // Heatmap-specific state
   const [activeHeatmapView, setActiveHeatmapView] = useState<'party' | 'candidate' | 'map'>('party');
-  const [selectedYear, setSelectedYear] = useState<'2021' | '2016' | '2011'>('2021');
+  const [selectedYear, setSelectedYear] = useState<'2024' | '2019' | '2014'>('2024');
   const [selectedPartyFilter, setSelectedPartyFilter] = useState<string>('All');
   const [heatmapLoading, setHeatmapLoading] = useState(false);
 
@@ -188,12 +188,14 @@ export default function RetroBoothsAnalysis({ selectedAssembly }: { selectedAsse
 
     const loadData = async () => {
       try {
-        // 1. Local Processing for Polling Data
-        const assemblyData = processLocalPollingData(selectedAssembly, rawPollingData);
-        const allData = processLocalPollingData(null, rawPollingData);
+        // 1. Polling Stations (Firestore)
+        const psRef = collection(db, 'pollingStation');
+        const psQuery = query(psRef, where('ac_id', '==', selectedAssembly));
+        const psSnap = await getDocs(psQuery);
+        const assemblyData = psSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as PollingStation));
 
         setData(assemblyData);
-        setAllAssembliesData(allData);
+        setAllAssembliesData([]);
 
         // 2. Firestore Fetches for Dynamic Data
         const [candidatesSnap, cardsSnap] = await Promise.all([
@@ -224,13 +226,11 @@ export default function RetroBoothsAnalysis({ selectedAssembly }: { selectedAsse
   const getPartyColor = (party: string) => {
     const colors: Record<string, string> = {
       'BJP': '#FF6B35',
-      'DMK': '#E63946',
-      'AIADMK': '#06A77D',
+      'YSRCP': '#E63946',
+      'TDP': '#06A77D',
       'INC': '#0077B6',
-      'NR Congress': '#00B4D8',
-      'NRC': '#00B4D8',
-      'PMK': '#FFC300',
-      'VCK': '#9D4EDD',
+      'JSP': '#00B4D8',
+      'BSP': '#9D4EDD',
       'CPI': '#FF006E',
       'CPI(M)': '#D62828',
       'IND': '#6C757D',
@@ -242,9 +242,9 @@ export default function RetroBoothsAnalysis({ selectedAssembly }: { selectedAsse
   // Compute Weak Booths - REACTIVE to year
   const computedWeakBooths = useMemo(() => {
     if (!data.length) return {};
-    const parties = ['BJP', 'DMK', 'AIADMK'];
+    const parties = ['BJP', 'YSRCP', 'TDP'];
     const weak: { [party: string]: { locality: string; score: number }[] } = {};
-    const yearKey = `election${selectedYear}` as 'election2021' | 'election2016' | 'election2011';
+    const yearKey = `election${selectedYear}` as 'election2024' | 'election2019' | 'election2014';
 
     parties.forEach((party) => {
       weak[party] = data
@@ -262,7 +262,7 @@ export default function RetroBoothsAnalysis({ selectedAssembly }: { selectedAsse
   // Compute Independent Hotspots - REACTIVE to year
   const computedIndependentHotspots = useMemo(() => {
     if (!data.length) return [];
-    const yearKey = `election${selectedYear}` as 'election2021' | 'election2016' | 'election2011';
+    const yearKey = `election${selectedYear}` as 'election2024' | 'election2019' | 'election2014';
 
     return data
       .filter((b) => (b[yearKey]?.candidates['IND'] || 0) > 0.05)
@@ -272,9 +272,9 @@ export default function RetroBoothsAnalysis({ selectedAssembly }: { selectedAsse
         candidateName: 'Independent Candidate',
         bestPerformance: booth[yearKey]?.candidates['IND'] || 0,
         bestYear: selectedYear,
-        perf2021: booth.election2021?.candidates['IND'] || 0,
-        perf2016: booth.election2016?.candidates['IND'] || 0,
-        perf2011: booth.election2011?.candidates['IND'] || 0,
+        perf2024: booth.election2024?.candidates['IND'] || 0,
+        perf2019: booth.election2019?.candidates['IND'] || 0,
+        perf2014: booth.election2014?.candidates['IND'] || 0,
       }))
       .sort((a, b) => b.bestPerformance - a.bestPerformance)
       .slice(0, 6);
@@ -285,8 +285,8 @@ export default function RetroBoothsAnalysis({ selectedAssembly }: { selectedAsse
   const partyHeatmapData = useMemo(() => {
     if (!data.length) return [];
 
-    const parties = ['BJP', 'DMK', 'AIADMK', 'INC', 'NR Congress', 'PMK', 'VCK', 'CPI', 'CPI(M)', 'IND'];
-    const yearKey = `election${selectedYear}` as 'election2021' | 'election2016' | 'election2011';
+    const parties = ['BJP', 'YSRCP', 'TDP', 'INC', 'JSP', 'BJP', 'BSP', 'CPI', 'CPI(M)', 'IND'];
+    const yearKey = `election${selectedYear}` as 'election2024' | 'election2019' | 'election2014';
 
     // Return booth-level data for the selected assembly
     return data.map(booth => {
@@ -310,7 +310,7 @@ export default function RetroBoothsAnalysis({ selectedAssembly }: { selectedAsse
   const candidateHeatmapData = useMemo(() => {
     if (!data.length) return [];
 
-    const yearKey = `election${selectedYear}` as 'election2021' | 'election2016' | 'election2011';
+    const yearKey = `election${selectedYear}` as 'election2024' | 'election2019' | 'election2014';
 
     return data.map(booth => {
       const candidates = booth[yearKey]?.candidates || {};
@@ -337,7 +337,7 @@ export default function RetroBoothsAnalysis({ selectedAssembly }: { selectedAsse
   const mapMarkersData = useMemo(() => {
     if (!data.length) return [];
 
-    const yearKey = `election${selectedYear}` as 'election2021' | 'election2016' | 'election2011';
+    const yearKey = `election${selectedYear}` as 'election2024' | 'election2019' | 'election2014';
 
     return data.map((booth) => {
       const candidates = booth[yearKey]?.candidates || {};
@@ -386,8 +386,8 @@ export default function RetroBoothsAnalysis({ selectedAssembly }: { selectedAsse
   const heatMapData = data.map((booth) => {
     // Percentages are already 0.0-1.0, so multiply by 100 for Chart display
     return {
-      x: (booth.election2021?.candidates['BJP'] || 0) * 100,
-      y: (booth.election2021?.candidates['DMK'] || 0) * 100,
+      x: (booth.election2024?.candidates['BJP'] || 0) * 100,
+      y: (booth.election2024?.candidates['YSRCP'] || 0) * 100,
       locality: booth.locality,
       category: booth.category || 'Unknown',
     };
@@ -423,12 +423,12 @@ export default function RetroBoothsAnalysis({ selectedAssembly }: { selectedAsse
             <label className="text-sm font-semibold text-gray-700">Election Year:</label>
             <select
               value={selectedYear}
-              onChange={(e) => setSelectedYear(e.target.value as '2021' | '2016' | '2011')}
+              onChange={(e) => setSelectedYear(e.target.value as '2024' | '2019' | '2014')}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="2021">2021</option>
-              <option value="2016">2016</option>
-              <option value="2011">2011</option>
+              <option value="2024">2024</option>
+              <option value="2019">2019</option>
+              <option value="2014">2014</option>
             </select>
           </div>
 
@@ -441,11 +441,11 @@ export default function RetroBoothsAnalysis({ selectedAssembly }: { selectedAsse
             >
               <option value="All">All Parties</option>
               <option value="BJP">BJP</option>
-              <option value="DMK">DMK</option>
-              <option value="AIADMK">AIADMK</option>
+              <option value="YSRCP">YSRCP</option>
+              <option value="TDP">TDP</option>
               <option value="INC">INC</option>
-              <option value="NR Congress">NR Congress</option>
-              <option value="PMK">PMK</option>
+              <option value="JSP">JSP</option>
+              <option value="BJP">BJP</option>
             </select>
           </div>
         </div>
@@ -503,7 +503,7 @@ export default function RetroBoothsAnalysis({ selectedAssembly }: { selectedAsse
                       <th className="sticky left-0 bg-gray-100 px-4 py-3 text-left text-sm font-bold text-gray-700 border-b-2 border-gray-300 z-10">
                         Polling Booth
                       </th>
-                      {['BJP', 'DMK', 'AIADMK', 'INC', 'NR Congress', 'PMK', 'VCK', 'CPI', 'CPI(M)', 'IND']
+                      {['BJP', 'YSRCP', 'TDP', 'INC', 'JSP', 'BJP', 'BSP', 'CPI', 'CPI(M)', 'IND']
                         .filter(party => selectedPartyFilter === 'All' || party === selectedPartyFilter)
                         .map(party => (
                           <th key={party} className="px-4 py-3 text-center text-sm font-bold border-b-2 border-gray-300" style={{ color: getPartyColor(party) }}>
@@ -518,7 +518,7 @@ export default function RetroBoothsAnalysis({ selectedAssembly }: { selectedAsse
                         <td className="sticky left-0 bg-inherit px-4 py-3 text-sm font-semibold text-gray-700 border-r border-gray-200 z-10">
                           PS {row.boothId} - {row.boothName}
                         </td>
-                        {['BJP', 'DMK', 'AIADMK', 'INC', 'NR Congress', 'PMK', 'VCK', 'CPI', 'CPI(M)', 'IND']
+                        {['BJP', 'YSRCP', 'TDP', 'INC', 'JSP', 'BJP', 'BSP', 'CPI', 'CPI(M)', 'IND']
                           .filter(party => selectedPartyFilter === 'All' || party === selectedPartyFilter)
                           .map(party => {
                             const voteShare = row[party] as number || 0;
@@ -685,7 +685,7 @@ export default function RetroBoothsAnalysis({ selectedAssembly }: { selectedAsse
               <div className="mt-4 p-4 bg-gray-50 rounded-lg">
                 <p className="text-sm font-semibold text-gray-700 mb-3">Party Colors:</p>
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-                  {['BJP', 'DMK', 'AIADMK', 'INC', 'NR Congress', 'PMK', 'IND'].map(party => (
+                  {['BJP', 'YSRCP', 'TDP', 'INC', 'JSP', 'BJP', 'IND'].map(party => (
                     <div key={party} className="flex items-center gap-2">
                       <div
                         className="w-6 h-6 rounded-full border-2 border-white shadow"
@@ -731,17 +731,17 @@ export default function RetroBoothsAnalysis({ selectedAssembly }: { selectedAsse
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">PS No</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Locality</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Station Name</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Votes (2021)</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider bg-blue-50">Winner 2021</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Winner 2016</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Winner 2011</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Votes (2024)</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider bg-blue-50">Winner 2024</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Winner 2019</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Winner 2014</th>
                   <th className="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {[...data].sort((a, b) => parseInt(a.ps_no) - parseInt(b.ps_no)).map((booth, idx) => {
 
-                  const getWinner = (electionData: PollingStation['election2021']) => {
+                  const getWinner = (electionData: PollingStation['election2024']) => {
                     if (!electionData?.candidates) return { winner: "-", margin: "" };
 
                     // Filter out ALL non-candidate fields (VOTERS, NOTA, PS_NO, POLLED, OTHERS)
@@ -758,37 +758,37 @@ export default function RetroBoothsAnalysis({ selectedAssembly }: { selectedAsse
                       const rVal = runnerShare <= 1 ? runnerShare * 100 : runnerShare;
 
                       return {
-                        winner: winner === 'NRC' ? 'NR Congress' : winner,
+                        winner: winner === 'JSP' ? 'JSP' : winner,
                         margin: (wVal - rVal).toFixed(1) + '%'
                       };
                     }
                     return { winner: "-", margin: "" };
                   };
 
-                  const w21 = getWinner(booth.election2021);
-                  const w16 = getWinner(booth.election2016);
-                  const w11 = getWinner(booth.election2011);
+                  const w21 = getWinner(booth.election2024);
+                  const w16 = getWinner(booth.election2019);
+                  const w11 = getWinner(booth.election2014);
 
                   return (
                     <tr key={idx} className="hover:bg-gray-50 transition-colors">
                       <td className="px-4 py-2 text-sm text-gray-900 font-mono">{booth.ps_no}</td>
                       <td className="px-4 py-2 text-sm text-gray-800 font-medium">{booth.locality}</td>
                       <td className="px-4 py-2 text-xs text-gray-500 max-w-xs truncate" title={booth.ps_name}>{booth.ps_name}</td>
-                      <td className="px-4 py-2 text-sm text-gray-600 text-right">{booth.election2021?.total_votes?.toLocaleString() || '-'}</td>
+                      <td className="px-4 py-2 text-sm text-gray-600 text-right">{booth.election2024?.total_votes?.toLocaleString() || '-'}</td>
 
-                      {/* 2021 */}
+                      {/* 2024 */}
                       <td className="px-4 py-2 text-sm text-center bg-blue-50 border-x border-blue-100">
                         <div className="font-bold text-gray-800">{w21.winner}</div>
                         <div className="text-xs text-blue-600">+{w21.margin}</div>
                       </td>
 
-                      {/* 2016 */}
+                      {/* 2019 */}
                       <td className="px-4 py-2 text-sm text-center">
                         <div className="font-medium text-gray-700">{w16.winner}</div>
                         {w16.winner !== '-' && <div className="text-xs text-gray-500">+{w16.margin}</div>}
                       </td>
 
-                      {/* 2011 */}
+                      {/* 2014 */}
                       <td className="px-4 py-2 text-sm text-center">
                         <div className="font-medium text-gray-700">{w11.winner}</div>
                         {w11.winner !== '-' && <div className="text-xs text-gray-500">+{w11.margin}</div>}
@@ -832,9 +832,9 @@ export default function RetroBoothsAnalysis({ selectedAssembly }: { selectedAsse
               <YAxis
                 type="number"
                 dataKey="y"
-                name="DMK Vote %"
+                name="YSRCP Vote %"
                 unit="%"
-                label={{ value: 'DMK Vote Share %', angle: -90, position: 'insideLeft' }}
+                label={{ value: 'YSRCP Vote Share %', angle: -90, position: 'insideLeft' }}
                 domain={[0, 100]}
               />
               <Tooltip
@@ -846,7 +846,7 @@ export default function RetroBoothsAnalysis({ selectedAssembly }: { selectedAsse
                       <div className="bg-white p-2 border rounded shadow text-xs">
                         <p className="font-bold">{data.locality}</p>
                         <p>BJP: {data.x.toFixed(1)}%</p>
-                        <p>DMK: {data.y.toFixed(1)}%</p>
+                        <p>YSRCP: {data.y.toFixed(1)}%</p>
                         <p>Category: {data.category}</p>
                       </div>
                     );
@@ -882,8 +882,8 @@ export default function RetroBoothsAnalysis({ selectedAssembly }: { selectedAsse
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Locality</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">BJP 2021</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">DMK 2021</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">BJP 2024</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">YSRCP 2024</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
               </tr>
             </thead>
@@ -891,8 +891,8 @@ export default function RetroBoothsAnalysis({ selectedAssembly }: { selectedAsse
               {retroBooths.slice(0, 10).map((booth, idx) => (
                 <tr key={idx}>
                   <td className="px-4 py-3 text-sm">{booth.locality}</td>
-                  <td className="px-4 py-3 text-sm">{((booth.election2021?.candidates['BJP'] || 0) * 100).toFixed(1)}%</td>
-                  <td className="px-4 py-3 text-sm">{((booth.election2021?.candidates['DMK'] || 0) * 100).toFixed(1)}%</td>
+                  <td className="px-4 py-3 text-sm">{((booth.election2024?.candidates['BJP'] || 0) * 100).toFixed(1)}%</td>
+                  <td className="px-4 py-3 text-sm">{((booth.election2024?.candidates['YSRCP'] || 0) * 100).toFixed(1)}%</td>
                   <td className="px-4 py-3 text-sm">
                     <span className={`px-2 py-1 rounded text-xs font-medium ${(booth.category || 'C') === 'A' ? 'bg-green-100 text-green-800' :
                       (booth.category || 'C') === 'B' ? 'bg-blue-100 text-blue-800' :
@@ -913,7 +913,7 @@ export default function RetroBoothsAnalysis({ selectedAssembly }: { selectedAsse
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {Object.keys(computedWeakBooths).map((party) => (
             <div key={party} className="bg-white p-6 rounded-lg shadow border-t-4" style={{ borderTopColor: getPartyColor(party) }}>
-              <h4 className="text-lg font-bold mb-4" style={{ color: getPartyColor(party) }}>{party === 'NRC' ? 'NR Congress' : party} - Weak Booths</h4>
+              <h4 className="text-lg font-bold mb-4" style={{ color: getPartyColor(party) }}>{party === 'JSP' ? 'JSP' : party} - Weak Booths</h4>
               <div className="space-y-4">
                 {computedWeakBooths[party].map((booth: any, idx: number) => (
                   <div key={idx} className="bg-gray-50 p-3 rounded border border-gray-100">
@@ -947,16 +947,16 @@ export default function RetroBoothsAnalysis({ selectedAssembly }: { selectedAsse
                 </div>
                 <div className="mt-3 pt-3 border-t border-yellow-200 grid grid-cols-3 gap-2">
                   <div className="text-center">
-                    <p className="text-[10px] text-gray-500">2021</p>
-                    <p className="text-xs font-bold text-gray-700">{(hotspot.perf2021 * 100).toFixed(1)}%</p>
+                    <p className="text-[10px] text-gray-500">2024</p>
+                    <p className="text-xs font-bold text-gray-700">{(hotspot.perf2024 * 100).toFixed(1)}%</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-[10px] text-gray-500">2016</p>
-                    <p className="text-xs font-bold text-gray-700">{(hotspot.perf2016 * 100).toFixed(1)}%</p>
+                    <p className="text-[10px] text-gray-500">2019</p>
+                    <p className="text-xs font-bold text-gray-700">{(hotspot.perf2019 * 100).toFixed(1)}%</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-[10px] text-gray-500">2011</p>
-                    <p className="text-xs font-bold text-gray-700">{(hotspot.perf2011 * 100).toFixed(1)}%</p>
+                    <p className="text-[10px] text-gray-500">2014</p>
+                    <p className="text-xs font-bold text-gray-700">{(hotspot.perf2014 * 100).toFixed(1)}%</p>
                   </div>
                 </div>
               </div>

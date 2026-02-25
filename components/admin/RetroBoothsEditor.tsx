@@ -52,9 +52,9 @@ interface IndependentHotspot {
     candidateName: string;
     bestPerformance: number;
     bestYear: string;
-    perf2021?: number;
-    perf2016?: number;
-    perf2011?: number;
+    perf2024?: number;
+    perf2019?: number;
+    perf2014?: number;
     notes?: string;
     order: number;
 }
@@ -104,7 +104,7 @@ export default function RetroBoothsEditor() {
         showWeakBooths: true,
         showIndependentHotspots: true,
         showCustomCards: true,
-        heatMapTitle: 'BJP vs DMK Vote Share Analysis (2021)',
+        heatMapTitle: 'BJP vs YSRCP Vote Share Analysis (2024)',
         heatMapDescription: 'Visualizing booth-wise performance distribution.'
     });
 
@@ -144,7 +144,7 @@ export default function RetroBoothsEditor() {
                     showWeakBooths: data.showWeakBooths ?? true,
                     showIndependentHotspots: data.showIndependentHotspots ?? true,
                     showCustomCards: data.showCustomCards ?? true,
-                    heatMapTitle: data.heatMapTitle || 'BJP vs DMK Vote Share Analysis (2021)',
+                    heatMapTitle: data.heatMapTitle || 'BJP vs YSRCP Vote Share Analysis (2024)',
                     heatMapDescription: data.heatMapDescription || 'Visualizing booth-wise performance distribution.'
                 });
             }
@@ -447,7 +447,7 @@ export default function RetroBoothsEditor() {
                             </div>
 
                             <div className="space-y-6">
-                                {['BJP', 'DMK', 'AIADMK'].map(party => {
+                                {['BJP', 'YSRCP', 'TDP'].map(party => {
                                     const partyBooths = weakBooths.filter(b => b.party === party);
                                     return (
                                         <div key={party} className="mb-4">
@@ -481,7 +481,7 @@ export default function RetroBoothsEditor() {
                                 <h3 className="text-lg font-semibold">Hotspots ({hotspots.length})</h3>
                                 <button
                                     onClick={() => setEditingHotspot({
-                                        assemblyId, locality: '', candidateName: '', bestPerformance: 0, bestYear: '2021', order: hotspots.length + 1
+                                        assemblyId, locality: '', candidateName: '', bestPerformance: 0, bestYear: '2024', order: hotspots.length + 1
                                     })}
                                     className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700"
                                 >
@@ -619,8 +619,8 @@ export default function RetroBoothsEditor() {
                                     className="w-full border rounded px-3 py-2"
                                 >
                                     <option value="BJP">BJP</option>
-                                    <option value="DMK">DMK</option>
-                                    <option value="AIADMK">AIADMK</option>
+                                    <option value="YSRCP">YSRCP</option>
+                                    <option value="TDP">TDP</option>
                                 </select>
                             </div>
                             <div>
@@ -716,40 +716,40 @@ export default function RetroBoothsEditor() {
                                         onChange={(e) => setEditingHotspot({ ...editingHotspot, bestYear: e.target.value })}
                                         className="w-full border rounded px-3 py-2"
                                     >
-                                        <option value="2021">2021</option>
-                                        <option value="2016">2016</option>
-                                        <option value="2011">2011</option>
+                                        <option value="2024">2024</option>
+                                        <option value="2019">2019</option>
+                                        <option value="2014">2014</option>
                                     </select>
                                 </div>
                             </div>
                             <div className="grid grid-cols-3 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium mb-1">2021 (%)</label>
+                                    <label className="block text-sm font-medium mb-1">2024 (%)</label>
                                     <input
                                         type="number"
                                         step="0.1"
-                                        value={((editingHotspot.perf2021 || 0) * 100).toFixed(1)}
-                                        onChange={(e) => setEditingHotspot({ ...editingHotspot, perf2021: parseFloat(e.target.value) / 100 || 0 })}
+                                        value={((editingHotspot.perf2024 || 0) * 100).toFixed(1)}
+                                        onChange={(e) => setEditingHotspot({ ...editingHotspot, perf2024: parseFloat(e.target.value) / 100 || 0 })}
                                         className="w-full border rounded px-3 py-2"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium mb-1">2016 (%)</label>
+                                    <label className="block text-sm font-medium mb-1">2019 (%)</label>
                                     <input
                                         type="number"
                                         step="0.1"
-                                        value={((editingHotspot.perf2016 || 0) * 100).toFixed(1)}
-                                        onChange={(e) => setEditingHotspot({ ...editingHotspot, perf2016: parseFloat(e.target.value) / 100 || 0 })}
+                                        value={((editingHotspot.perf2019 || 0) * 100).toFixed(1)}
+                                        onChange={(e) => setEditingHotspot({ ...editingHotspot, perf2019: parseFloat(e.target.value) / 100 || 0 })}
                                         className="w-full border rounded px-3 py-2"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium mb-1">2011 (%)</label>
+                                    <label className="block text-sm font-medium mb-1">2014 (%)</label>
                                     <input
                                         type="number"
                                         step="0.1"
-                                        value={((editingHotspot.perf2011 || 0) * 100).toFixed(1)}
-                                        onChange={(e) => setEditingHotspot({ ...editingHotspot, perf2011: parseFloat(e.target.value) / 100 || 0 })}
+                                        value={((editingHotspot.perf2014 || 0) * 100).toFixed(1)}
+                                        onChange={(e) => setEditingHotspot({ ...editingHotspot, perf2014: parseFloat(e.target.value) / 100 || 0 })}
                                         className="w-full border rounded px-3 py-2"
                                     />
                                 </div>

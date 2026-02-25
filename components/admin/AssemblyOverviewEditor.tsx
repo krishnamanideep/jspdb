@@ -19,10 +19,10 @@ interface PartyConfig {
 // Common parties in the data
 const AVAILABLE_PARTIES = [
     'BJP',
-    'DMK',
-    'AIADMK',
-    'NRC',
-    'PMK',
+    'YSRCP',
+    'TDP',
+    'JSP',
+    'BJP',
     'IND',
     'OTHERS',
     'INC',
@@ -77,7 +77,7 @@ export default function AssemblyOverviewEditor() {
                 // Default: top 5 parties
                 setConfig({
                     assemblyId,
-                    selectedParties: ['BJP', 'DMK', 'AIADMK', 'NRC', 'PMK']
+                    selectedParties: ['BJP', 'YSRCP', 'TDP', 'JSP', 'BJP']
                 });
             }
         } catch (e) {

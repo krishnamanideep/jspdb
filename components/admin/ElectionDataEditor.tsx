@@ -96,7 +96,7 @@ export default function ElectionDataEditor() {
         } else {
             setElectionForm({
                 total_votes: 0,
-                candidates: [{ party: 'BJP', share: 0 }, { party: 'DMK', share: 0 }]
+                candidates: [{ party: 'BJP', share: 0 }, { party: 'YSRCP', share: 0 }]
             });
         }
     };

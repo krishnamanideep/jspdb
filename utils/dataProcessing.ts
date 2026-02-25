@@ -32,43 +32,43 @@ export const processLocalPollingData = (targetAssemblyId: string | null): Pollin
 
             const entries = jsonData[key] as Record<string, unknown>[];
             const stations = entries.map((station, index) => {
-                const candidates2021: Record<string, number> = {};
-                const candidates2016: Record<string, number> = {};
-                const candidates2011: Record<string, number> = {};
+                const candidates2024: Record<string, number> = {};
+                const candidates2019: Record<string, number> = {};
+                const candidates2014: Record<string, number> = {};
 
                 Object.keys(station).forEach(k => {
-                    if (k.endsWith('_2021_pct')) {
-                        const candidateKey = k.replace('_2021_pct', '');
+                    if (k.endsWith('_2024_pct')) {
+                        const candidateKey = k.replace('_2024_pct', '');
                         if (isCandidateKey(candidateKey)) {
-                            candidates2021[candidateKey] = parseNumeric(station[k]);
+                            candidates2024[candidateKey] = parseNumeric(station[k]);
                         }
-                    } else if (k.endsWith('_2016_pct')) {
-                        const candidateKey = k.replace('_2016_pct', '');
+                    } else if (k.endsWith('_2019_pct')) {
+                        const candidateKey = k.replace('_2019_pct', '');
                         if (isCandidateKey(candidateKey)) {
-                            candidates2016[candidateKey] = parseNumeric(station[k]);
+                            candidates2019[candidateKey] = parseNumeric(station[k]);
                         }
-                    } else if (k.endsWith('_2011_pct')) {
-                        const candidateKey = k.replace('_2011_pct', '');
+                    } else if (k.endsWith('_2014_pct')) {
+                        const candidateKey = k.replace('_2014_pct', '');
                         if (isCandidateKey(candidateKey)) {
-                            candidates2011[candidateKey] = parseNumeric(station[k]);
+                            candidates2014[candidateKey] = parseNumeric(station[k]);
                         }
                     }
                 });
 
                 return {
-                    id: `${acId}_${station.PS_NO_2021 || index}`,
+                    id: `${acId}_${station.PS_NO_2024 || index}`,
                     ac_id: acId,
                     ac_name: String(station.LOCALITY_EXTRACTED ?? `AC ${acId}`),
-                    ps_no: String(station.PS_NO_2021 ?? index),
-                    ps_name: String(station.PS_NO_2021 ?? index),
+                    ps_no: String(station.PS_NO_2024 ?? index),
+                    ps_name: String(station.PS_NO_2024 ?? index),
                     locality: String(station.LOCALITY_EXTRACTED ?? ''),
                     latitude: parseNumeric(station.Latitude),
                     longitude: parseNumeric(station.Longitude),
                     category: String(station.TOP_SCORE_CATEGORY ?? ''),
                     strongestParty: String(station.TOP_SCORE_PARTY ?? ''),
-                    election2021: { year: 2021, total_votes: parseNumeric(station.POLLED_2021), candidates: candidates2021 },
-                    election2016: { year: 2016, total_votes: parseNumeric(station.POLLED_2016), candidates: candidates2016 },
-                    election2011: { year: 2011, total_votes: parseNumeric(station.POLLED_2011), candidates: candidates2011 }
+                    election2024: { year: 2024, total_votes: parseNumeric(station.POLLED_2024), candidates: candidates2024 },
+                    election2019: { year: 2019, total_votes: parseNumeric(station.POLLED_2019), candidates: candidates2019 },
+                    election2014: { year: 2014, total_votes: parseNumeric(station.POLLED_2014), candidates: candidates2014 }
                 };
             });
             allStations = [...allStations, ...stations];

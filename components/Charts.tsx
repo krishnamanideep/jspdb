@@ -26,9 +26,9 @@ interface CandidateComparisonChartProps {
 export function CandidateComparisonChart({ data }: CandidateComparisonChartProps) {
   const chartData = data.map(item => ({
     name: item.name,
-    '2011': item.votes_2011,
-    '2016': item.votes_2016,
-    '2021': item.votes_2021,
+    '2014': item.votes_2014,
+    '2019': item.votes_2019,
+    '2024': item.votes_2024,
   }));
 
   return (
@@ -41,9 +41,9 @@ export function CandidateComparisonChart({ data }: CandidateComparisonChartProps
           <YAxis />
           <Tooltip formatter={(value: unknown) => typeof value === 'number' ? `${value.toFixed(2)}%` : String(value)} />
           <Legend />
-          <Bar dataKey="2011" fill="#3b82f6" name="2011" radius={[8, 8, 0, 0]} />
-          <Bar dataKey="2016" fill="#f59e0b" name="2016" radius={[8, 8, 0, 0]} />
-          <Bar dataKey="2021" fill="#10b981" name="2021" radius={[8, 8, 0, 0]} />
+          <Bar dataKey="2014" fill="#3b82f6" name="2014" radius={[8, 8, 0, 0]} />
+          <Bar dataKey="2019" fill="#f59e0b" name="2019" radius={[8, 8, 0, 0]} />
+          <Bar dataKey="2024" fill="#10b981" name="2024" radius={[8, 8, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>
@@ -98,11 +98,11 @@ export function ElectionTrendChart({ data }: ElectionTrendChartProps) {
 
 interface CandidateVotePieChartProps {
   data: CandidatePerformance[];
-  year: 2011 | 2016 | 2021;
+  year: 2014 | 2019 | 2024;
 }
 
 export function CandidateVotePieChart({ data, year }: CandidateVotePieChartProps) {
-  const voteKey = year === 2011 ? 'votes_2011' : year === 2016 ? 'votes_2016' : 'votes_2021';
+  const voteKey = year === 2014 ? 'votes_2014' : year === 2019 ? 'votes_2019' : 'votes_2024';
   const pieData = data.map(item => ({
     name: item.name,
     value: parseFloat(item[voteKey as keyof CandidatePerformance].toString()),

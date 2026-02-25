@@ -19,13 +19,13 @@ interface MLA {
     image?: string;
 }
 
-const ELECTION_YEARS = ['2021', '2016', '2011'];
-const PARTIES = ['BJP', 'DMK', 'AIADMK', 'INC', 'NR Congress', 'PMK', 'VCK', 'CPI', 'CPI(M)', 'LJK', 'IND', 'Others'];
+const ELECTION_YEARS = ['2024', '2019', '2014'];
+const PARTIES = ['BJP', 'YSRCP', 'TDP', 'INC', 'JSP', 'BJP', 'BSP', 'CPI', 'CPI(M)', 'LJK', 'IND', 'Others'];
 
 export default function MLAEditor() {
     const { user } = useAuth();
     const [assemblyId, setAssemblyId] = useState('');
-    const [selectedYear, setSelectedYear] = useState('2021');
+    const [selectedYear, setSelectedYear] = useState('2024');
     const [mlas, setMlas] = useState<MLA[]>([]);
     const [editing, setEditing] = useState<MLA | null>(null);
     const [saving, setSaving] = useState(false);
@@ -91,8 +91,8 @@ export default function MLAEditor() {
     const getPartyColor = (party: string) => {
         switch (party) {
             case 'BJP': return 'bg-orange-500';
-            case 'DMK': return 'bg-red-600';
-            case 'AIADMK': return 'bg-green-600';
+            case 'YSRCP': return 'bg-red-600';
+            case 'TDP': return 'bg-green-600';
             case 'INC': return 'bg-blue-500';
             default: return 'bg-gray-500';
         }
@@ -122,7 +122,7 @@ export default function MLAEditor() {
                         </select>
                     </div>
                     <button
-                        onClick={() => setEditing({ assemblyId, year: '2021', name: '', party: 'BJP' })}
+                        onClick={() => setEditing({ assemblyId, year: '2024', name: '', party: 'BJP' })}
                         className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700"
                     >
                         <Plus size={18} /> Add MLA Record

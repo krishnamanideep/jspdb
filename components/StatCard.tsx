@@ -45,9 +45,9 @@ interface ElectionSummaryStatsProps {
   summary: {
     totalStations: number;
     constituency: string;
-    totalVotes2021: number;
-    avgTurnout2021: number;
-    winner2021: string;
+    totalVotes2024: number;
+    avgTurnout2024: number;
+    winner2024: string;
   };
 }
 
@@ -67,15 +67,15 @@ export function ElectionSummaryStats({ summary }: ElectionSummaryStatsProps) {
         color="purple"
       />
       <StatCard
-        title="Average Turnout 2021"
-        value={summary.avgTurnout2021}
+        title="Average Turnout 2024"
+        value={summary.avgTurnout2024}
         suffix="%"
         icon={<TrendingUp className="w-6 h-6" />}
         color="green"
       />
       <StatCard
-        title="Winner 2021"
-        value={summary.winner2021}
+        title="Winner 2024"
+        value={summary.winner2024}
         icon={<DollarSign className="w-6 h-6" />}
         color="red"
       />

@@ -47,11 +47,11 @@ export default function CandidatePanel({ selectedAssembly, previewData }: { sele
   const getPartyColor = (party: string) => {
     switch (party) {
       case 'BJP': return 'bg-orange-500';
-      case 'DMK': return 'bg-red-500';
-      case 'AIADMK': return 'bg-green-600';
+      case 'YSRCP': return 'bg-red-500';
+      case 'TDP': return 'bg-green-600';
       case 'INC': return 'bg-blue-600';
-      case 'AINRC': case 'NRC': return 'bg-teal-600';
-      case 'PMK': return 'bg-amber-600';
+      case 'AIJSP': case 'JSP': return 'bg-teal-600';
+      case 'BJP': return 'bg-amber-600';
       default: return 'bg-gray-600';
     }
   };

@@ -45,7 +45,7 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 import { useWidgetConfig, WidgetConfigProvider } from '@/components/admin/WidgetConfigContext';
 
 // Election years available
-const ELECTION_YEARS = ['2021', '2016', '2011'];
+const ELECTION_YEARS = ['2024', '2019', '2014'];
 
 // MLA interface matching the database
 interface MLA {
@@ -72,7 +72,7 @@ export default function AssemblyOverviewWrapper(props: { selectedAssembly: strin
 function AssemblyOverview({ selectedAssembly }: { selectedAssembly: string }) {
   const { config } = useWidgetConfig();
   const [data, setData] = useState<PollingStation[]>([]);
-  const [selectedYear, setSelectedYear] = useState<string>('2021');
+  const [selectedYear, setSelectedYear] = useState<string>('2024');
   const [mlas, setMlas] = useState<MLA[]>([]);
   const [stats, setStats] = useState<{
     totalBooths: number;
@@ -99,10 +99,10 @@ function AssemblyOverview({ selectedAssembly }: { selectedAssembly: string }) {
   // Helper to get election data for selected year
   const getElectionData = (booth: PollingStation, year: string) => {
     switch (year) {
-      case '2021': return booth.election2021;
-      case '2016': return booth.election2016;
-      case '2011': return booth.election2011;
-      default: return booth.election2021;
+      case '2024': return booth.election2024;
+      case '2019': return booth.election2019;
+      case '2014': return booth.election2014;
+      default: return booth.election2024;
     }
   };
 
@@ -189,12 +189,11 @@ function AssemblyOverview({ selectedAssembly }: { selectedAssembly: string }) {
 
     const fetchData = async () => {
       try {
-        // 1. Polling Stations (Local)
-        const pollingStations = processLocalPollingData(null); // Fetch all to filter later? Or fetch specific?
-        // Logic below filters: const assemblyData = pollingStations.filter(...)
-        // Let's pass null to get all, OR better, pass selectedAssembly if util supports it properly.
-        // Util supports filtering! Let's just fetch for this assembly.
-        const assemblyData = processLocalPollingData(selectedAssembly);
+        // 1. Polling Stations (Firestore)
+        const psRef = collection(db, 'pollingStation');
+        const psQuery = query(psRef, where('ac_id', '==', selectedAssembly));
+        const psSnap = await getDocs(psQuery);
+        const assemblyData = psSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as PollingStation));
         console.log('Loaded data for assembly', selectedAssembly, 'booths:', assemblyData.length);
         setData(assemblyData);
         calculateStats(assemblyData, selectedYear);
@@ -266,8 +265,8 @@ function AssemblyOverview({ selectedAssembly }: { selectedAssembly: string }) {
   const getPartyColor = (party: string) => {
     switch (party) {
       case 'BJP': return 'from-orange-500 to-orange-600';
-      case 'DMK': return 'from-red-600 to-red-700';
-      case 'AIADMK': return 'from-green-600 to-green-700';
+      case 'YSRCP': return 'from-red-600 to-red-700';
+      case 'TDP': return 'from-green-600 to-green-700';
       case 'INC': return 'from-blue-500 to-blue-600';
       default: return 'from-blue-600 to-blue-700';
     }
@@ -340,7 +339,7 @@ function AssemblyOverview({ selectedAssembly }: { selectedAssembly: string }) {
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-sm opacity-80 uppercase tracking-wide">
-                {selectedYear === '2021' ? 'Current MLA' : 'Winner'} ({selectedYear} Election)
+                {selectedYear === '2024' ? 'Current MLA' : 'Winner'} ({selectedYear} Election)
               </div>
               <div className="text-2xl font-bold break-words">{currentMLA.name}</div>
               <div className="text-base opacity-90 break-words">

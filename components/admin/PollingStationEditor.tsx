@@ -146,7 +146,7 @@ export default function PollingStationEditor() {
                     ac_id: assemblyId,
                     ac_name: getAssemblyName(assemblyId),
                     ps_no: psNo,
-                    ps_name: item.PS_NO_2021 || `Station ${psNo}`,
+                    ps_name: item.PS_NO_2024 || `Station ${psNo}`,
                     locality: item.LOCALITY_EXTRACTED || '',
                     latitude: item.Latitude || 0,
                     longitude: item.Longitude || 0,
@@ -154,31 +154,31 @@ export default function PollingStationEditor() {
                     strongestParty: item.TOP_SCORE_PARTY || '',
 
                     // Add election data if needed, matching the schema
-                    election2021: {
-                        year: 2021,
+                    election2024: {
+                        year: 2024,
                         candidates: {
-                            BJP: item.BJP_2021_pct || 0,
-                            DMK: item.DMK_2021_pct || 0,
-                            NRC: item.NRC_2021_pct || 0,
-                            OTHERS: item.OTHERS_2021_pct || 0
+                            BJP: item.BJP_2024_pct || 0,
+                            YSRCP: item.YSRCP_2024_pct || 0,
+                            JSP: item.JSP_2024_pct || 0,
+                            OTHERS: item.OTHERS_2024_pct || 0
                         }
                     },
-                    election2016: {
-                        year: 2016,
+                    election2019: {
+                        year: 2019,
                         candidates: {
-                            NRC: item.NRC_2016_pct || 0,
-                            DMK: item.DMK_2016_pct || 0,
-                            AIADMK: item.AIADMK_2016_pct || 0,
-                            OTHERS: item.OTHERS_2016_pct || 0
+                            JSP: item.JSP_2019_pct || 0,
+                            YSRCP: item.YSRCP_2019_pct || 0,
+                            TDP: item.TDP_2019_pct || 0,
+                            OTHERS: item.OTHERS_2019_pct || 0
                         }
                     },
-                    election2011: {
-                        year: 2011,
+                    election2014: {
+                        year: 2014,
                         candidates: {
-                            NRC: item.NRC_2011_pct || 0,
-                            PMK: item.PMK_2011_pct || 0,
-                            IND: item.IND_2011_pct || 0,
-                            OTHERS: item.OTHERS_2011_pct || 0
+                            JSP: item.JSP_2014_pct || 0,
+                            BJP: item.BJP_2014_pct || 0,
+                            IND: item.IND_2014_pct || 0,
+                            OTHERS: item.OTHERS_2014_pct || 0
                         }
                     }
                 };
@@ -273,9 +273,9 @@ export default function PollingStationEditor() {
                                         latitude: 11.9416,
                                         longitude: 79.8083,
                                         strongestParty: 'BJP',
-                                        election2021: { year: 2021, candidates: { BJP: 0, DMK: 0, AIADMK: 0, OTHERS: 0 } },
-                                        election2016: { year: 2016, candidates: { BJP: 0, DMK: 0, AIADMK: 0, OTHERS: 0 } },
-                                        election2011: { year: 2011, candidates: { BJP: 0, DMK: 0, AIADMK: 0, OTHERS: 0 } }
+                                        election2024: { year: 2024, candidates: { BJP: 0, YSRCP: 0, TDP: 0, OTHERS: 0 } },
+                                        election2019: { year: 2019, candidates: { BJP: 0, YSRCP: 0, TDP: 0, OTHERS: 0 } },
+                                        election2014: { year: 2014, candidates: { BJP: 0, YSRCP: 0, TDP: 0, OTHERS: 0 } }
                                     });
                                 }}
                                 className="bg-green-600 text-white p-2 rounded-lg hover:bg-green-700 flex items-center gap-2"

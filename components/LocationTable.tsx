@@ -21,15 +21,15 @@ export function LocationTable({ pollingStations }: LocationTableProps) {
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Locality</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Category</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Strongest Party</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">2021 Winner</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">2024 Winner</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Winner %</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Coordinates</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
             {pollingStations.map((station) => {
-              const results2021 = station.election2021?.candidates || {};
-              const winner = Object.entries(results2021).reduce((a, b) =>
+              const results2024 = station.election2024?.candidates || {};
+              const winner = Object.entries(results2024).reduce((a, b) =>
                 (b[1] as number) > (a[1] as number) ? b : a
               );
 

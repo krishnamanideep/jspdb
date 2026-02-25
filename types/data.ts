@@ -10,9 +10,9 @@ export interface PollingStation {
   category?: string;
   strongestParty?: string;
   strongestPartyPercentage?: number;
-  election2011?: ElectionResults;
-  election2016?: ElectionResults;
-  election2021?: ElectionResults;
+  election2014?: ElectionResults;
+  election2019?: ElectionResults;
+  election2024?: ElectionResults;
 }
 
 export interface ElectionResults {
@@ -25,9 +25,9 @@ export interface ElectionResults {
 
 export interface CandidatePerformance {
   name: string;
-  votes_2011: number;
-  votes_2016: number;
-  votes_2021: number;
+  votes_2014: number;
+  votes_2019: number;
+  votes_2024: number;
   trend: number;
 }
 
@@ -115,9 +115,9 @@ export interface DashboardData {
   summary: {
     totalStations: number;
     constituency: string;
-    totalVotes2021: number;
-    avgTurnout2021: number;
-    winner2021: string;
+    totalVotes2024: number;
+    avgTurnout2024: number;
+    winner2024: string;
   };
 }
 

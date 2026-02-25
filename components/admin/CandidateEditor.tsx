@@ -251,12 +251,12 @@ export default function CandidateEditor() {
                             <select className="border p-2 rounded" value={formData.party || ''} onChange={e => setFormData({ ...formData, party: e.target.value })}>
                                 <option value="">Select Party</option>
                                 <option value="BJP">BJP</option>
-                                <option value="DMK">DMK</option>
-                                <option value="AIADMK">AIADMK</option>
+                                <option value="YSRCP">YSRCP</option>
+                                <option value="TDP">TDP</option>
                                 <option value="INC">INC</option>
-                                <option value="PMK">PMK</option>
-                                <option value="NRC">NRC</option>
-                                <option value="AINRC">AINRC</option>
+                                <option value="BJP">BJP</option>
+                                <option value="JSP">JSP</option>
+                                <option value="AIJSP">AIJSP</option>
                                 <option value="LJK">LJK</option>
                                 <option value="IND">Independent</option>
                                 <option value="Others">Others</option>
@@ -500,7 +500,7 @@ export default function CandidateEditor() {
                                     <div>
                                         <h4 className="font-bold text-lg">{c.name}</h4>
                                         <div className="flex items-center gap-2">
-                                            <span className={`text-xs px-2 py-1 rounded text-white ${c.party === 'BJP' ? 'bg-orange-500' : c.party === 'DMK' ? 'bg-red-500' : c.party === 'AIADMK' ? 'bg-green-600' : c.party === 'INC' ? 'bg-blue-500' : c.party === 'AINRC' ? 'bg-teal-600' : 'bg-gray-500'}`}>{c.party}</span>
+                                            <span className={`text-xs px-2 py-1 rounded text-white ${c.party === 'BJP' ? 'bg-orange-500' : c.party === 'YSRCP' ? 'bg-red-500' : c.party === 'TDP' ? 'bg-green-600' : c.party === 'INC' ? 'bg-blue-500' : c.party === 'AIJSP' ? 'bg-teal-600' : 'bg-gray-500'}`}>{c.party}</span>
                                             <span className="text-xs text-gray-500">{c.constituency || getAssemblyName(c.assemblyId || assemblyId)}</span>
                                             {(c.customCards?.length || 0) > 0 && (
                                                 <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded">{c.customCards?.length} cards</span>

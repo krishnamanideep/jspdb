@@ -30,7 +30,7 @@ function MapUpdater({ center, zoom }: { center: [number, number], zoom: number }
 
 export default function MapComponent({ data }: MapComponentProps) {
   const [icons, setIcons] = useState<{ [key: string]: unknown } | null>(null);
-  const [selectedYear, setSelectedYear] = useState<'2021' | '2016' | '2011'>('2021');
+  const [selectedYear, setSelectedYear] = useState<'2024' | '2019' | '2014'>('2024');
 
   useEffect(() => {
     // Only run on client side
@@ -74,7 +74,7 @@ export default function MapComponent({ data }: MapComponentProps) {
 
   const getWinnerForYear = (booth: PollingStation, year: string) => {
     // Calculate winner for the given year from candidate data
-    const electionData = year === '2021' ? booth.election2021 : year === '2016' ? booth.election2016 : booth.election2011;
+    const electionData = year === '2024' ? booth.election2024 : year === '2019' ? booth.election2019 : booth.election2014;
     if (!electionData || !electionData.candidates) return booth.strongestParty || null;
 
     let winner = 'Unknown';
@@ -98,8 +98,8 @@ export default function MapComponent({ data }: MapComponentProps) {
     const party = winner?.toUpperCase();
 
     if (party?.includes('BJP')) return icons.orange;
-    if (party?.includes('DMK')) return icons.red;
-    if (party?.includes('AIADMK')) return icons.green;
+    if (party?.includes('YSRCP')) return icons.red;
+    if (party?.includes('TDP')) return icons.green;
     return icons.blue;
   };
 
@@ -113,7 +113,7 @@ export default function MapComponent({ data }: MapComponentProps) {
     <div className="w-full h-full bg-gray-100 rounded-lg overflow-hidden relative">
       {/* Year Selector */}
       <div className="absolute top-4 right-4 z-[1000] bg-white rounded shadow-md p-1 flex gap-1">
-        {['2021', '2016', '2011'].map((year) => (
+        {['2024', '2019', '2014'].map((year) => (
           <button
             key={year}
             onClick={() => setSelectedYear(year as any)}
@@ -160,7 +160,7 @@ export default function MapComponent({ data }: MapComponentProps) {
           const markerIcon = getMarkerIcon(booth);
           if (!markerIcon) return null;
 
-          const electionData = selectedYear === '2021' ? booth.election2021 : selectedYear === '2016' ? booth.election2016 : booth.election2011;
+          const electionData = selectedYear === '2024' ? booth.election2024 : selectedYear === '2019' ? booth.election2019 : booth.election2014;
           const winner = getWinnerForYear(booth, selectedYear);
 
           return (
@@ -222,11 +222,11 @@ export default function MapComponent({ data }: MapComponentProps) {
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-red-500"></div>
-            <span>DMK</span>
+            <span>YSRCP</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-green-500"></div>
-            <span>AIADMK</span>
+            <span>TDP</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-blue-500"></div>

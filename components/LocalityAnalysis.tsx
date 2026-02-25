@@ -31,10 +31,10 @@ export function LocalityAnalysis({ pollingStations }: LocalityAnalysisProps) {
         };
       }
       acc[station.locality].stations += 1;
-      if (station.election2021) {
-        acc[station.locality].ainrc += station.election2021.candidates.AINRC || 0;
-        acc[station.locality].inc += station.election2021.candidates.INC || 0;
-        acc[station.locality].vigeswaran += station.election2021.candidates.VIGESWARAN || 0;
+      if (station.election2024) {
+        acc[station.locality].ainrc += station.election2024.candidates.AIJSP || 0;
+        acc[station.locality].inc += station.election2024.candidates.INC || 0;
+        acc[station.locality].vigeswaran += station.election2024.candidates.VIGESWARAN || 0;
         acc[station.locality].totalVotes += 1;
       }
       return acc;
@@ -46,7 +46,7 @@ export function LocalityAnalysis({ pollingStations }: LocalityAnalysisProps) {
   const chartData = Object.values(localityData)
     .map((item: any) => ({
       name: item.locality,
-      'AINRC %': (item.ainrc / item.totalVotes).toFixed(2),
+      'AIJSP %': (item.ainrc / item.totalVotes).toFixed(2),
       'INC %': (item.inc / item.totalVotes).toFixed(2),
       'VIGESWARAN %': (item.vigeswaran / item.totalVotes).toFixed(2),
       stations: item.stations,
@@ -64,7 +64,7 @@ export function LocalityAnalysis({ pollingStations }: LocalityAnalysisProps) {
             <YAxis />
             <Tooltip formatter={(value) => `${value}%`} />
             <Legend />
-            <Bar dataKey="AINRC %" fill="#3b82f6" name="AINRC %" />
+            <Bar dataKey="AIJSP %" fill="#3b82f6" name="AIJSP %" />
             <Bar dataKey="INC %" fill="#ef4444" name="INC %" />
             <Bar dataKey="VIGESWARAN %" fill="#10b981" name="VIGESWARAN %" />
           </BarChart>
@@ -80,7 +80,7 @@ export function LocalityAnalysis({ pollingStations }: LocalityAnalysisProps) {
               <tr>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Locality</th>
                 <th className="px-6 py-3 text-center text-sm font-semibold text-gray-700">Polling Stations</th>
-                <th className="px-6 py-3 text-center text-sm font-semibold text-gray-700">Avg AINRC %</th>
+                <th className="px-6 py-3 text-center text-sm font-semibold text-gray-700">Avg AIJSP %</th>
                 <th className="px-6 py-3 text-center text-sm font-semibold text-gray-700">Avg INC %</th>
                 <th className="px-6 py-3 text-center text-sm font-semibold text-gray-700">Avg VIGESWARAN %</th>
               </tr>

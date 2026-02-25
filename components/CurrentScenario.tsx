@@ -154,8 +154,8 @@ export default function CurrentScenario({ selectedAssembly, previewData }: { sel
           <div className="space-y-4">
             {(data?.electoralOutlook || [
               { party: 'BJP', range: '35-40%', value: 38, color: 'orange' },
-              { party: 'DMK', range: '30-35%', value: 33, color: 'red' },
-              { party: 'AIADMK', range: '15-20%', value: 18, color: 'green' },
+              { party: 'YSRCP', range: '30-35%', value: 33, color: 'red' },
+              { party: 'TDP', range: '15-20%', value: 18, color: 'green' },
               { party: 'Others', range: '10-15%', value: 12, color: 'gray' }
             ]).map((outlook: any, idx: number) => (
               <div key={idx}>
