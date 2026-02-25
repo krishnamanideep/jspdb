@@ -694,5 +694,5 @@ export const ASSEMBLIES = [
 ];
 
 export const getAssemblyName = (id: string) => {
-    return ASSEMBLIES.find(a => a.id === id)?.name || Assembly \;
+    return ASSEMBLIES.find(a => a.id === id)?.name || `Assembly ${id}`;
 };
