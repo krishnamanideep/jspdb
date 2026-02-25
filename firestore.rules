@@ -93,6 +93,9 @@ service cloud.firestore {
       allow read: if isAuthenticated();
       allow write: if isAdmin();
     }
+    match /surveyData/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
   }
 }
-
