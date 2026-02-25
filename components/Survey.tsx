@@ -17,6 +17,7 @@ export default function Survey({ selectedAssembly, previewData }: { selectedAsse
     }
 
     const loadData = async () => {
+      if (!selectedAssembly) return;
       try {
         const docRef = doc(db, 'surveyData', selectedAssembly);
         const docSnap = await getDoc(docRef);
